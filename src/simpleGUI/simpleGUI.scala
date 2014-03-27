@@ -9,13 +9,17 @@ import java.awt.TexturePaint
 import javax.imageio.ImageIO
 import java.io.File
 import java.awt.geom.Rectangle2D
+import javax.swing.BorderFactory
+import javax.swing.border.EtchedBorder
+import java.awt.Font
 
 
 object SimpleGUI extends SimpleSwingApplication {
 
   def top = new MainFrame { // tp is a required method
-    title = "A Sample Scala Swing GUI"
-
+    title = "BlackJack"
+    var gameFont = new Font("Bodoni MT Black", Font.BOLD, 30)
+    var messageFont = new Font("Bodoni MT Black", Font.BOLD, 15)
    /* // declare Components here
     val label = new Label {
       text = "I'm a big label!."
@@ -48,37 +52,72 @@ object SimpleGUI extends SimpleSwingApplication {
       contents += label
       contents += textArea
     }
-    
-      // create graphics panel and add it to the frame
-    val dealerCanvas1 = CardCanvas.getInstance(200,200,Array("S2", "HT"))
-    val dealerCanvas2 = CardCanvas.getInstance(200,200,Array("SA", "CK"))
-    val FlowPanel2 = new FlowPanel {
-
-      contents += CardCanvas.getInstance(200,200,Array("H8", "D3"))
-      contents += CardCanvas.getInstance(200,200,Array("CQ", "CK"))
-    }
 
     // choose a top-level Panel and put components in it
     // Components may include other Panels*/
     
+      
      val canvas = new Canvas {
       preferredSize = new Dimension(100, 100)
     }
     
-    val button = new Button {
-      text = "Throw!"
-      foreground = Color.blue
-      background = Color.red
-      borderPainted = true
-      enabled = true
-      tooltip = "Click to throw a dart"
-    }
+    var border2 = BorderFactory.createCompoundBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED), 
+	BorderFactory.createEtchedBorder(EtchedBorder.LOWERED))				
+    
+	var gameDeck = new StringDeck
+    //gameDeck.shuffle
+    var playerDeck = new StringDeck(gameDeck.deal(2))
+    var dealerDeck = new StringDeck(gameDeck.deal(2))
+    var playerCanvas =  CardCanvas.getInstance(1000,200, playerDeck, false, false, true, 20,0)
+    
+    
+    var player1_space = new FlowPanel {
+
+      this.opaque = false
+      contents += playerCanvas
       
-    val panelFelt = new BorderPanel {
+    }
+    
+    
+	val button_hit = new Button {
+		text = "Hit!"
+		font_=(gameFont)
+		//foreground = Color.blue
+		//background = Color.red
+		//this.preferredSize_=(new Dimension(80,30))
+		borderPainted = true
+		enabled = true
+		tooltip = "Click to get another card from the dealer."
+	}
+    
+    var dealer_space = new FlowPanel {
+
+      this.opaque = false
+      this.border = border2
+       
+      contents += CardCanvas.getInstance(400, 200, gameDeck, false, false, false, 5, 2)
+      contents += CardCanvas.getInstance(600,200, dealerDeck, true, false, false, 20,0)
+      
+     
+        
+      contents += button_hit
+    }
+    
+     val messageArea = new TextArea {
+      text = "Hello! Let's start a game\n"
+      background = Color.gray
+      font_=(messageFont)
+    }
+    
+    
+      
+    var panelFelt = new BorderPanel {
       preferredSize = new Dimension(1500, 800)
       
-      layout(canvas) = South
-      layout(button) = North
+      layout(dealer_space) = North
+      layout(player1_space) = South
+      layout(messageArea) = West
+     
       
       override def paintComponent(g: Graphics2D) = {
         
@@ -115,23 +154,39 @@ object SimpleGUI extends SimpleSwingApplication {
     }
 
     // specify which Components produce events of interest
-    /*listenTo(button)
-    listenTo(toggle)
-    listenTo(canvas.mouse.clicks)
+    listenTo(button_hit)
+    /*listenTo(toggle)
+    listenTo(canvas.mouse.clicks)*/
 
     // react to events
     reactions += {
-      case ButtonClicked(component) if component == button =>
-        val x = Random.nextInt(100)
-        val y = Random.nextInt(100)
-        val c = new Color(Random.nextInt(Int.MaxValue))
-        canvas.throwDart(new Dart(x, y, c))
-        textField.text = s"Dart thrown at $x, $y"
-      case ButtonClicked(component) if component == toggle =>
+      case ButtonClicked(component) if component == button_hit =>
+      	
+        val prescore = playerDeck.score
+	    playerDeck.dealt(gameDeck.deal(1))
+	  	playerCanvas.update(playerDeck)
+	  	playerCanvas.repaint
+	  	
+	  	//check for blackJack
+	  	val yourscore = playerDeck.score
+	  	if (yourscore == 21) {
+	  	  messageArea.append("You win\n")
+	  	  messageArea.append("(" + prescore + ", " + yourscore + ")")
+	  	
+	  	} else if (yourscore > 21) { 
+	  	  messageArea.append("You lose\n")
+	  	  messageArea.append("(" + prescore + ", " + yourscore + ")")
+	  	}
+	  	else {
+	  	  messageArea.append("You can Hit or Pass to the dealer\n")
+	  	  messageArea.append("(" + prescore + ", " + yourscore + ")")
+	  	}
+      	
+      /*case ButtonClicked(component) if component == toggle =>
         toggle.text = if (toggle.selected) "On" else "Off"
       case MouseClicked(_, point, _, _, _) =>
         canvas.throwDart(new Dart(point.x, point.y, Color.black))
-        textField.text = (s"You clicked in the Canvas at x=${point.x}, y=${point.y}.") 
-    }*/
+        textField.text = (s"You clicked in the Canvas at x=${point.x}, y=${point.y}.") */
+    }
   }
 }
