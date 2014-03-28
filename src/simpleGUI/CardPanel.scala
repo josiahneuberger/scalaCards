@@ -1,12 +1,4 @@
 package simpleGUI
-
-/******************************************************************************
-* File : CardPanel.java (version 2)
-* Author : http://java.macteki.com/
-* Description :
-*   Display a shuffled deck of playing card.
-* Tested with : JDK 1.6 under Windows XP and MAC osx 10.6.6
-******************************************************************************/
  
 import java.awt.image.BufferedImage
 import java.awt.Font
@@ -144,11 +136,13 @@ class CardCanvas extends scala.swing.Panel {
     }
      
     var point = postfix
-    var x = 5
-  
+    
     gr.setColor(color)
     gr.drawString(point,3,20)
     gr.drawString(suit,1,38)
+    gr.setFont(new Font("Bodoni MT Black", Font.BOLD, 120))
+    gr.drawString(suit,30,70)
+    gr.drawString(point,0,140)
     return image   
   }
  
@@ -166,7 +160,6 @@ class CardCanvas extends scala.swing.Panel {
       
 	  if (xoffset != 0) { 
 	    x += cardWidth*(xoffset/100)
-	    val yy = 3
 	   }
 	  if (yoffset != 0) { y += cardHeight*(yoffset/100) }
     }

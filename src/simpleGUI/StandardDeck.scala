@@ -13,20 +13,48 @@ class StandardDeck extends Deck[(String, String, Int)] with StandardCards {
 }
 
 class StringDeck extends Deck[String] with StringCards with StringBlackjack {
-	//http://www.cis.upenn.edu/~matuszek/Concise%20Guides/Concise%20Scala.html#lists
-	//http://en.wikibooks.org/wiki/Scala/Tuples
   
 	this.deck = newDeck
 	
 	def this(yourDeck: List[String]) {
 	  this()
-	  this.deck = setDeck(yourDeck)
+	  deck = yourDeck
 	}
 	
 	def score(): Int = {
 	  return score(this.deck)
 	}
   
+}
+
+class StringChips extends Deck[Int] with PokerChips {
+	this.deck = newDeck
+	
+	def add(c: Array[Int]) = {
+		
+		var l:Array[Int] = new Array[Int](3)
+		for(i <- 0 to 2) {
+			l(i) = deck(i) + c(i)
+		}
+		deck = List.fromArray(l)
+	}
+	
+	def subtract(c: Array[Int]) = {
+		
+		var l:Array[Int] = new Array[Int](3)
+		for(i <- 0 to 2) {
+			l(i) = deck(i) - c(i)
+		}
+		deck = List.fromArray(l)
+	}
+	
+	def value(): Int = {
+		return value(this.deck.toArray)
+	}
+	
+	def betvalue(): Int = {
+	  return value(this.betAmount)
+	}
 }
 
 
@@ -68,6 +96,8 @@ abstract class Deck[L] {
 	def getList: List[L] = {
 	  return deck
 	}
+	
+	def setDeck(yourDeck: List[L]) = { deck = yourDeck }
 
 }
 
@@ -87,7 +117,7 @@ trait StandardCards {
 }
 
 trait StringCards {
-	def setDeck(yourDeck: List[String]) : List[String] = { return yourDeck }
+	
 	def newDeck() : List[String]  = {
 		return List("SA", "S2", "SA","S2","S3","S4","S5","S6","S7","S8","S9","ST","SJ","SQ","SK", // spade
 					"HA","H2","H3","H4","H5","H6","H7","H8","H9","HT","HJ","HQ","HK", // heart
@@ -123,10 +153,44 @@ trait StringBlackjack {
 		  
 		  deckScore += cardValue
 	  }
-	  return deckScore + aceScore(deckScore, aces);
-	}
-	 
-	
-	
+	  return deckScore + aceScore(deckScore, aces)
+	}	
 }
+
+trait PokerChips {
+
+	val value_black = 100
+	val value_red = 5
+	val value_green = 25
+	val symbol = List("R","G","B")
+	val number = Array(5,25,100)
+	var betAmount = Array(0,0,0)
+	
+	val Blackchip = """(\d{0,3})B(\d{0,3})""".r
+	val Redchip = """(\d{0,3})R(\d{0,3})""".r
+	val Greenchip = """(\d{0,3})G(\d{0,3})""".r
+	
+	def matchChip(card: String) :(Int, Int) = card match {
+	      case Blackchip(number,_) => (number.toInt, value_black)
+	      case Redchip(number,_) => (number.toInt, value_red)
+	      case Greenchip(number,_) => (number.toInt, value_green)
+	      case _ => System.err.println("ERROR: bad deck we couldn't match this card:" + card); (0,0);
+	}
+	
+	def value(chipList: Array[Int]): Int = {
+	  var stashValue = 0
+	  
+	  var i= -1
+	  for (cn <- chipList) {
+		  i+=1
+		  stashValue += number(i)*cn
+	  }
+	  return stashValue
+	}
+	
+	def newDeck(): List[Int] = {
+	  return List(20,10,5);
+	}
+}
+
   
