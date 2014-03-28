@@ -46,12 +46,13 @@ abstract class Deck[L] {
 	def deal() : L = {
 	  var top = deck.head
 	  deck = deck.tail
+	  
 	  return top
 	}
 	
 	def deal(numberOfCards:Int) : List[L] = {
-	  var cards = deck.take(numberOfCards)
-	  deck = deck.drop(numberOfCards)
+	  var cards = deck.takeRight(numberOfCards)
+	  deck = deck.dropRight(numberOfCards)
 	  
 	  return cards
 	}

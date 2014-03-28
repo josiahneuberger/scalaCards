@@ -21,6 +21,7 @@ import javax.swing.ImageIcon
 import scala.swing.BorderPanel
 import java.awt.Dimension
 import scala.swing.Panel
+import java.awt.Color
 
 object CardCanvas extends scala.swing.Panel { 
   
@@ -87,12 +88,14 @@ class CardCanvas extends scala.swing.Panel {
     
     //http://subtlepatterns.com/diagmonds/
     var cardback_imgFile = new File("images/card_back.png")
-    var image = ImageIO.read(cardback_imgFile).getSubimage(0, 0, cardWidth.toInt, cardHeight.toInt)
+    var image2 = ImageIO.read(cardback_imgFile).getSubimage(0, 0, cardWidth.toInt, cardHeight.toInt)
+    var image = new BufferedImage(image2.getWidth, image2.getHeight, BufferedImage.TYPE_4BYTE_ABGR)
 
     var gr = image.createGraphics()
+    gr.drawRenderedImage(image2, null)
     
     // Draw Border
-    gr.setColor(java.awt.Color.RED)
+    gr.setColor(Color.black)
     gr.drawRect(0,0,cardWidth.toInt-1,cardHeight.toInt-1)
     
     return image
@@ -102,24 +105,24 @@ class CardCanvas extends scala.swing.Panel {
     
     //http://subtlepatterns.com/fresh-snow/
     var cardface_imgFile = new File("images/card_face.png")
-    //http://subtlepatterns.com/swirl/
-    var cardback_imgFile = new File("images/card_back.png")
-    var image = ImageIO.read(cardface_imgFile).getSubimage(0, 0, cardWidth.toInt, cardHeight.toInt)
+    var image2 = ImageIO.read(cardface_imgFile).getSubimage(0, 0, cardWidth.toInt, cardHeight.toInt)
+    var image = new BufferedImage(image2.getWidth, image2.getHeight, BufferedImage.TYPE_4BYTE_ABGR)
+    
 
     var gr = image.createGraphics()
+    gr.drawRenderedImage(image2, null)
     
     // Draw Border
-    gr.setColor(java.awt.Color.RED)
+    gr.setColor(Color.black)
     gr.drawRect(0,0,cardWidth.toInt-1,cardHeight.toInt-1)
     
-    // draw the "three of Spade"
     font = new Font("Dialog",Font.PLAIN, 20)
     gr.setFont(font)
     
     val prefix = card.substring(0,1)  // first character
     val postfix = card.substring(1,2) // second character
     var suit=""
-    var color = java.awt.Color.BLACK
+    var color = Color.black
     
     if (prefix.equals("S")) {
       
@@ -128,7 +131,7 @@ class CardCanvas extends scala.swing.Panel {
     else if (prefix.equals("H")) {
       
       suit = "\u2665"   // unicode for the "heart" character
-      color = java.awt.Color.RED
+      color = Color.red
     }
     else if (prefix.equals("C")) {
       
@@ -137,17 +140,11 @@ class CardCanvas extends scala.swing.Panel {
     else if (prefix.equals("D")) {
      
       suit = "\u2666"   // unicode for the "diamond" character
-      color = java.awt.Color.RED
+      color = Color.red
     }
      
     var point = postfix
     var x = 5
-    
-    /*if (postfix.equals("T")) {
-      
-      x = 1
-      point = "10"  // special handling for "ten"
-    }*/
   
     gr.setColor(color)
     gr.drawString(point,3,20)

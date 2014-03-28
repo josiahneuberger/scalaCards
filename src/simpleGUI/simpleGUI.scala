@@ -16,59 +16,47 @@ import java.awt.Font
 
 object SimpleGUI extends SimpleSwingApplication {
 
-  def top = new MainFrame { // tp is a required method
-    title = "BlackJack"
-    var gameFont = new Font("Bodoni MT Black", Font.BOLD, 30)
-    var messageFont = new Font("Bodoni MT Black", Font.BOLD, 15)
-   /* // declare Components here
-    val label = new Label {
-      text = "I'm a big label!."
-      font = new Font("Ariel", java.awt.Font.ITALIC, 24)
-    }
-    val button = new Button {
-      text = "Throw!"
-      foreground = Color.blue
-      background = Color.red
-      borderPainted = true
-      enabled = true
-      tooltip = "Click to throw a dart"
-    }
-    val toggle = new ToggleButton { text = "Toggle" }
-    val checkBox = new CheckBox { text = "Check me" }
-    val textField = new TextField {
-      columns = 10
-      text = "Click on the target!"	
-    }
-    val textArea = new TextArea {
-      text = "initial text\nline two"
-      background = Color.green
-    }
-    val canvas = new Canvas {
-      preferredSize = new Dimension(100, 100)
-    }
-     
-    val gridPanel = new GridPanel(1, 2) {
-      contents += checkBox
-      contents += label
-      contents += textArea
-    }
-
-    // choose a top-level Panel and put components in it
-    // Components may include other Panels*/
+  def top = new MainFrame { 
+   title = "BlackJack"
+   var gameFont = new Font("Bodoni MT Black", Font.BOLD, 30)
+   var messageFont = new Font("Bodoni MT Black", Font.BOLD, 15)
     
-      
-     val canvas = new Canvas {
-      preferredSize = new Dimension(100, 100)
-    }
+   val button_hit = new Button {
+		text = "Hit!"
+		font_=(gameFont)
+		borderPainted = true
+		enabled = true
+		tooltip = "Click to get another card from the dealer."
+	}
+	
+	val button_pass = new Button {
+		text = "Pass!"
+		font_=(gameFont)
+		borderPainted = true
+		enabled = true
+		tooltip = "Click to pass to Dealer."
+	}
+	
+	val button_newgame = new Button {
+		text = "Start New Game!"
+		font_=(gameFont)
+		borderPainted = true
+		enabled = true
+		visible = false
+		tooltip = "Click to start a new game!"
+	}
     
     var border2 = BorderFactory.createCompoundBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED), 
-	BorderFactory.createEtchedBorder(EtchedBorder.LOWERED))				
+	BorderFactory.createEtchedBorder(EtchedBorder.LOWERED))	
+
     
 	var gameDeck = new StringDeck
-    //gameDeck.shuffle
+    gameDeck.shuffle
     var playerDeck = new StringDeck(gameDeck.deal(2))
     var dealerDeck = new StringDeck(gameDeck.deal(2))
-    var playerCanvas =  CardCanvas.getInstance(1000,200, playerDeck, false, false, true, 20,0)
+    var playerCanvas = CardCanvas.getInstance(600,200, playerDeck, false, false, true, 20,0)
+    var dealerCanvas = CardCanvas.getInstance(400,300, dealerDeck, false, true, true, 20,0)
+    var gameCanvas = CardCanvas.getInstance(600, 400, gameDeck, false, false, false, 20, 2)
     
     
     var player1_space = new FlowPanel {
@@ -76,36 +64,24 @@ object SimpleGUI extends SimpleSwingApplication {
       this.opaque = false
       contents += playerCanvas
       
+      contents += button_hit
+      contents += button_pass
+      contents += button_newgame
+      
     }
     
-    
-	val button_hit = new Button {
-		text = "Hit!"
-		font_=(gameFont)
-		//foreground = Color.blue
-		//background = Color.red
-		//this.preferredSize_=(new Dimension(80,30))
-		borderPainted = true
-		enabled = true
-		tooltip = "Click to get another card from the dealer."
-	}
-    
-    var dealer_space = new FlowPanel {
+    var dealer_space = new BorderPanel {
 
       this.opaque = false
       this.border = border2
        
-      contents += CardCanvas.getInstance(400, 200, gameDeck, false, false, false, 5, 2)
-      contents += CardCanvas.getInstance(600,200, dealerDeck, true, false, false, 20,0)
-      
-     
-        
-      contents += button_hit
+      layout(gameCanvas) = North
+      layout(dealerCanvas) = South
     }
     
-     val messageArea = new TextArea {
-      text = "Hello! Let's start a game\n"
-      background = Color.gray
+    val messageArea = new TextArea {
+      text = "********************************************\nHello!\nLet's start the game already!!\n"
+      background = Color.white
       font_=(messageFont)
     }
     
@@ -114,7 +90,7 @@ object SimpleGUI extends SimpleSwingApplication {
     var panelFelt = new BorderPanel {
       preferredSize = new Dimension(1500, 800)
       
-      layout(dealer_space) = North
+      layout(dealer_space) = Center
       layout(player1_space) = South
       layout(messageArea) = West
      
@@ -153,38 +129,113 @@ object SimpleGUI extends SimpleSwingApplication {
       }
     }
 
-    // specify which Components produce events of interest
     listenTo(button_hit)
-    /*listenTo(toggle)
-    listenTo(canvas.mouse.clicks)*/
+    listenTo(button_pass)
+    listenTo(button_newgame)
+    //listenTo(canvas.mouse.clicks)*/
 
-    // react to events
     reactions += {
+      case ButtonClicked(component) if component == button_newgame =>
+       
+       	gameDeck = new StringDeck
+	    gameDeck.shuffle
+	    
+	    playerDeck = new StringDeck(gameDeck.deal(2))
+	    dealerDeck = new StringDeck(gameDeck.deal(2))
+       	
+       	dealerCanvas.bottomcard_flip = true
+	  	dealerCanvas.isFaceUp = false
+	    playerCanvas.update(playerDeck)
+	    dealerCanvas.update(dealerDeck) 
+	    gameCanvas.update(gameDeck)
+	    dealerCanvas.repaint
+	    gameCanvas.repaint
+	    
+	    
+	    button_pass.enabled_=(true)
+	    button_pass.enabled_=(true)
+       	button_hit.enabled_=(true)
+	    button_newgame.visible_=(false)
+	    messageArea.text_=("********************************************\nLet's start the next game already!!\n")
+	    playerCanvas.repaint
+	  
+	    
       case ButtonClicked(component) if component == button_hit =>
       	
-        val prescore = playerDeck.score
 	    playerDeck.dealt(gameDeck.deal(1))
 	  	playerCanvas.update(playerDeck)
+	  	gameCanvas.update(gameDeck)
 	  	playerCanvas.repaint
+	  	gameCanvas.repaint
 	  	
 	  	//check for blackJack
 	  	val yourscore = playerDeck.score
+	  	val dealerscore = dealerDeck.score
 	  	if (yourscore == 21) {
-	  	  messageArea.append("You win\n")
-	  	  messageArea.append("(" + prescore + ", " + yourscore + ")")
+	  	  messageArea.append("You win with BlackJack!\n")
+	  	  button_hit.enabled_=(false)
+	  	  button_pass.enabled_=(false)
+	  	  button_newgame.visible_=(true)
+	  	  
+	  	  dealerCanvas.bottomcard_flip = false
+	  	  dealerCanvas.isFaceUp = true
+	  	  dealerCanvas.update(dealerDeck)
+	  	  dealerCanvas.repaint
 	  	
 	  	} else if (yourscore > 21) { 
-	  	  messageArea.append("You lose\n")
-	  	  messageArea.append("(" + prescore + ", " + yourscore + ")")
+	  	  messageArea.append("You busted. Sorry you lose\n")
+	  	  messageArea.append("Your Score: " + yourscore + "\n")
+	  	  messageArea.append("Dealer current Score: " + dealerscore + "\n")
+	  	  button_hit.enabled_=(false)
+	  	  button_pass.enabled_=(false)
+	  	  button_newgame.visible_=(true)
+	  	  
+	  	  dealerCanvas.bottomcard_flip = false
+	  	  dealerCanvas.isFaceUp = true
+	  	  dealerCanvas.update(dealerDeck)
+	  	  dealerCanvas.repaint
+	  	  
 	  	}
-	  	else {
-	  	  messageArea.append("You can Hit or Pass to the dealer\n")
-	  	  messageArea.append("(" + prescore + ", " + yourscore + ")")
-	  	}
-      	
-      /*case ButtonClicked(component) if component == toggle =>
-        toggle.text = if (toggle.selected) "On" else "Off"
-      case MouseClicked(_, point, _, _, _) =>
+        
+     case ButtonClicked(component) if component == button_pass =>
+       
+       	button_hit.enabled_=(false)
+	  	button_pass.enabled_=(false)
+	  	button_newgame.visible_=(true)
+       
+        var dealerscore = 0
+        var playerscore = 0
+        var errorCounter = 0
+     	do {
+			errorCounter += 1
+     		//check for blackJack or a score higher than player
+			playerscore = playerDeck.score
+			dealerscore = dealerDeck.score
+			
+			if (dealerscore > 21) {
+			    messageArea.append("The dealer busted. You win!\n")
+			}
+			else if (dealerscore == 21 || dealerscore>playerscore) {
+			    messageArea.append("The dealer beat your score. Sorry you lose!\n")
+			    
+			
+			} else {
+			    dealerDeck.dealt(gameDeck.deal(1))
+			  	dealerCanvas.update(dealerDeck)
+			  	gameCanvas.update(gameDeck)
+			  	playerCanvas.repaint
+			  	gameCanvas.repaint
+			} 
+			
+     	} while (dealerscore<playerscore && dealerscore<21)
+     	  
+     	messageArea.append("Player final score: " + playerscore + "\nDealer final Score: " + dealerscore + "\n")
+        dealerCanvas.bottomcard_flip = false
+        dealerCanvas.isFaceUp = true
+	  	dealerCanvas.update(dealerDeck)
+	  	dealerCanvas.repaint
+
+     /* case MouseClicked(_, point, _, _, _) =>
         canvas.throwDart(new Dart(point.x, point.y, Color.black))
         textField.text = (s"You clicked in the Canvas at x=${point.x}, y=${point.y}.") */
     }
