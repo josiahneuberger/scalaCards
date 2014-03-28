@@ -87,7 +87,7 @@ class CardCanvas extends scala.swing.Panel {
     gr.drawRenderedImage(image2, null)
     
     // Draw Border
-    gr.setColor(Color.black)
+    gr.setColor(Color.white)
     gr.drawRect(0,0,cardWidth.toInt-1,cardHeight.toInt-1)
     
     return image

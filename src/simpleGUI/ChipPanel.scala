@@ -58,6 +58,8 @@ class ChipCanvas extends scala.swing.Panel {
 	var image = new BufferedImage(width,height,BufferedImage.TYPE_4BYTE_ABGR)
 	var gr = image.createGraphics()
 
+
+	var colors = Array(Color.red, Color.getHSBColor(0.3f, .8f, .3f), Color.black)
 	println(chips.deck.toString)
     for (i <- 0 to 2)
     {   
@@ -74,32 +76,33 @@ class ChipCanvas extends scala.swing.Panel {
 	    x_row3 = 90.0
 	    
 	    if (i==0) {
-	    	color = Color.red
+	    	color = Color.blue
 	    	strvalue = "  5"
 	    	y = 0
 	    	x_row3 += chipDiameter*(xoffset/100)
 	    	x = x_row3
 	    }
 	    else if (i==1) {
-	    	color = Color.getHSBColor(0.3f, .8f, .3f)
+	    	color = Color.black
 	    	strvalue = " 25"
 	    	y = chipDiameter
 	    	x_row2 += chipDiameter*(xoffset/100)
 	    	x = x_row2
 	    }
 	    else if (i==2) {
-	    	color = Color.black
+	    	color = Color.white
 	    	strvalue = "100"
 	    	y = chipDiameter*2
 	    	x_row1 += chipDiameter*(xoffset/100)
 	    	x = x_row1
 	    }
 	   
-    	for (i <- 1 to numberofchips) {
-		    
+    	for (w <- 1 to numberofchips) {
+    		
 		    var circleBorder = new Ellipse2D.Double(x, y, 100, 100)
 		    var outerCircle = new Ellipse2D.Double(x, y, 103, 103)
 		    var innerCircle = new Ellipse2D.Double(x+22, y+22, 60, 60)
+		    var innerBorder = new Ellipse2D.Double(x+22, y+22, 61, 61)
 
 		    
 		    gr.setColor(Color.black)
@@ -113,14 +116,23 @@ class ChipCanvas extends scala.swing.Panel {
 		    gr.fill(circleBorder)
 		    gr.setColor(color)
 		    gr.fill(outerCircle)
+		    
+		    var a = x+52 //centerx
+		    var b = y+51 //centery
+		    for (l <- 0 to 360 )  {
+		    	var xp = a + 50.5*Math.cos(l*Math.PI/180)
+		    	var yp = b + 48*math.sin(l*Math.PI/180)
+			    gr.setPaint(colors(i))
+			    gr.drawLine(a.toInt, b.toInt, xp.toInt, yp.toInt)
+		    }
+		    
 		    gr.setColor(Color.white)
 		    gr.fill(innerCircle)
 		    gr.setColor(Color.black)
-		    gr.drawString(strvalue,x.toInt+28,y.toInt+64)   
+		    gr.draw(innerBorder)
+		    gr.drawString(strvalue,x.toInt+28,y.toInt+64)
 		    
 		    x += chipDiameter*(xoffset/100)
-		    
-
     	}
     	
     }
