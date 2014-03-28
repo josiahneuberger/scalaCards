@@ -15,19 +15,36 @@ import java.awt.Dimension
 import scala.swing.Panel
 import java.awt.Color
 
+
+/********************************88
+ * @author Josiah Neuberger
+ * 
+ * 	The CardPanel class is based on the very basic design by Ivan Macteki and can be found
+ *  at http://java.macteki.com/2011/03/how-to-display-deck-of-playing-card-in.html. 
+ *  (Licensed under: MIT License): http://opensource.org/licenses/MIT
+ *  
+ *  I have heavily modified and upgraded the framework to support my needs here.
+ *  
+ *  I referenced the following code for an introduction to Scala GUIs;
+ *  	http://www.cis.upenn.edu/~matuszek/Concise%20Guides/Concise%20Scala%20GUI.html
+ *   
+ *  I also used Subtle Patterns for the face/back of the cards:
+ *  	http://subtlepatterns.com/
+ */
 object CardCanvas extends scala.swing.Panel { 
   
    def getInstance(width: Int, height: Int, d: StringDeck, topcard_flip:Boolean, bottomcard_flip:Boolean, isFaceUp:Boolean, xoffset: Int, yoffset: Int) : CardCanvas = {
      
      var panel = new CardCanvas
      panel.opaque_=(false)
+      
 	 panel.deck = d
 	 panel.xoffset = xoffset
 	 panel.yoffset = yoffset
 	 panel.topcard_flip = topcard_flip
 	 panel.bottomcard_flip = bottomcard_flip
 	 panel.isFaceUp = isFaceUp
-	 panel.cardImage = panel.createAllImages
+	 if (panel.deck != null) panel.cardImage = panel.createAllImages
 	 panel.preferredSize_=(new java.awt.Dimension(width,height))
 	 return panel
   }
@@ -49,7 +66,8 @@ class CardCanvas extends scala.swing.Panel {
   
   def update(d: StringDeck) {
 	  deck = d
-	  cardImage = createAllImages
+	  if (deck != null) cardImage = createAllImages
+	  else cardImage = Array[BufferedImage] ()
   }
  
   def createAllImages() : Array[BufferedImage] = {

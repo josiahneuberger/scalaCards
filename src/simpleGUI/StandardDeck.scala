@@ -3,13 +3,23 @@ package simpleGUI
 import scala.util.Random
 import scala.util.matching.Regex
 
+/********************************88
+ * @author Josiah Neuberger
+ * 
+ * 	The CardPanel class is based on the very basic design by Ivan Macteki and can be found
+ *  at http://java.macteki.com/2011/03/how-to-display-deck-of-playing-card-in.html. 
+ *  (Licensed under: MIT License): http://opensource.org/licenses/MIT
+ *  
+ *  I have heavily modified and upgraded the framework to support my needs here.
+ *  
+ *  I referenced the following code for an introduction to Scala GUIs;
+ *  	http://www.cis.upenn.edu/~matuszek/Concise%20Guides/Concise%20Scala%20GUI.html
+ *   
+ *  I also used Subtle Patterns for the face/back of the cards:
+ *  	http://subtlepatterns.com/
+ */
 class StandardDeck extends Deck[(String, String, Int)] with StandardCards {
-	//http://www.cis.upenn.edu/~matuszek/Concise%20Guides/Concise%20Scala.html#lists
-	//http://en.wikibooks.org/wiki/Scala/Tuples
-  
-	this.deck = newDeck
-	
-  
+	this.deck = newDeck  
 }
 
 class StringDeck extends Deck[String] with StringCards with StringBlackjack {
@@ -55,6 +65,14 @@ class StringChips extends Deck[Int] with PokerChips {
 	def betvalue(): Int = {
 	  return value(this.betAmount)
 	}
+	
+	def red(): Int = { return deck(0) }
+	def green(): Int = { return deck(1) }
+	def black(): Int = { return deck(2) }
+	
+	def redbet(): Int = { return betAmount(0) }
+	def greenbet(): Int = { return betAmount(1) }
+	def blackbet(): Int = { return betAmount(2) }
 }
 
 
@@ -188,8 +206,25 @@ trait PokerChips {
 	  return stashValue
 	}
 	
+	def translateToBigChips(chipList: Array[Int]): Array[Int] = {
+		var stashValue = value(chipList)
+
+
+		var blackchips = stashValue/number(2)
+		stashValue -= blackchips*number(2)
+		
+		var greenchips = stashValue/number(1)
+		stashValue -= greenchips*number(1)
+		
+		var redchips = stashValue/number(0)
+		stashValue -= redchips*number(0)
+		
+		assert(stashValue == 0)
+		return Array(redchips, greenchips, blackchips)
+	}
+	
 	def newDeck(): List[Int] = {
-	  return List(20,10,5);
+	  return List(8,5,1);
 	}
 }
 
