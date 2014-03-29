@@ -15,7 +15,6 @@ import java.awt.Dimension
 import scala.swing.Panel
 import java.awt.Color
 
-
 /********************************88
  * @author Josiah Neuberger
  * 

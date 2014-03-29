@@ -31,6 +31,7 @@ import java.awt.Font
  */
 object SimpleGUI extends SimpleSwingApplication {
 
+
   def top = new MainFrame { 
    title = "Josiah Neuberger's BlackJack"
    var gameFont = new Font("Bodoni MT Black", Font.BOLD, 30)
