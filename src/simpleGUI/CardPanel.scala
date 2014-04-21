@@ -32,7 +32,8 @@ import java.awt.Color
  */
 object CardCanvas extends scala.swing.Panel { 
   
-   def getInstance(width: Int, height: Int, d: StringDeck, topcard_flip:Boolean, bottomcard_flip:Boolean, isFaceUp:Boolean, xoffset: Int, yoffset: Int) : CardCanvas = {
+	//Draws a deck of cards using translations from the parameters.
+	def getInstance(width: Int, height: Int, d: StringDeck, topcard_flip:Boolean, bottomcard_flip:Boolean, isFaceUp:Boolean, xoffset: Int, yoffset: Int) : CardCanvas = {
      
      var panel = new CardCanvas
      panel.opaque_=(false)
@@ -69,6 +70,7 @@ class CardCanvas extends scala.swing.Panel {
 	  else cardImage = Array[BufferedImage] ()
   }
  
+  //Creates all the images for the deck of cards in this instance.
   def createAllImages() : Array[BufferedImage] = {
    
     var cardFaceArray = new Array[BufferedImage] (deck.size)
@@ -93,6 +95,7 @@ class CardCanvas extends scala.swing.Panel {
     return cardFaceArray;
   }
   
+  //Creates a back image of the card.
   def createBack() : BufferedImage = {
     
     //http://subtlepatterns.com/diagmonds/
@@ -110,6 +113,7 @@ class CardCanvas extends scala.swing.Panel {
     return image
   }
  
+  //creates a face card image based on the string
   def createImage(card: String) : BufferedImage = {
     
     //http://subtlepatterns.com/fresh-snow/
@@ -157,7 +161,7 @@ class CardCanvas extends scala.swing.Panel {
     gr.setColor(color)
     gr.drawString(point,3,20)
     gr.drawString(suit,1,38)
-    gr.setFont(new Font("Bodoni MT Black", Font.BOLD, 120))
+    gr.setFont(new Font("Dialog", Font.BOLD, 100))
     gr.drawString(suit,30,70)
     gr.drawString(point,0,140)
     return image   

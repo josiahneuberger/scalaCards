@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="create_run_jar" name="Create Runnable Jar for Project simpleGUI">
+    <!--this file was created by Eclipse Runnable JAR Export Wizard-->
+    <!--ANT 1.7 is required                                        -->
+    <target name="create_run_jar">
+        <jar destfile="C:/Users/josiah/Desktop/scala_workspace/simpleGUI/dist/blackjack.jar">
+            <manifest>
+                <attribute name="Main-Class" value="simpleGUI.SimpleGUI"/>
+                <attribute name="Class-Path" value="lib/scala-reflect.jar lib/akka-actors.jar lib/jline.jar lib/scala-actors-migration.jar lib/scala-actors.jar lib/scala-compiler.jar lib/scala-library.jar lib/scala-swing.jar lib/scalap.jar lib/type safe-config.jar lib/lib"/>
+            </manifest>
+            <fileset dir="C:/Users/josiah/Desktop/scala_workspace/simpleGUI/bin"/>
+        </jar>
+    </target>
+</project>

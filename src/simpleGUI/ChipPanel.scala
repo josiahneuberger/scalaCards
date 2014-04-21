@@ -19,7 +19,7 @@ import java.awt.geom.Ellipse2D
 /********************************88
  * @author Josiah Neuberger
  * 
- * 	The CardPanel class is based on the very basic design by Ivan Macteki and can be found
+ * 	The CardPanel/ChipCanvas class is based on the very basic design by Ivan Macteki and can be found
  *  at http://java.macteki.com/2011/03/how-to-display-deck-of-playing-card-in.html. 
  *  (Licensed under: MIT License): http://opensource.org/licenses/MIT
  *  
@@ -35,7 +35,10 @@ object ChipCanvas extends scala.swing.Panel {
 	
 	val TYPE_STACKED_VERTICAL_RIGHT = 0
 	val TYPE_STACKED_VERTICAL_RIGHT_INLINEX = 1
-  
+    
+	//Draw a new Chip Canvas based on the parameters, which allow
+	//	for drawing chips vertically/horizontally stacked; however,
+	//	only two vertical translations have been defined at this time.
 	def getInstance(w: Int, h: Int, d: StringChips, alignmentType: Int) : ChipCanvas = {
 	
 	  var panel = new ChipCanvas
@@ -64,6 +67,9 @@ object ChipCanvas extends scala.swing.Panel {
   }
 }
  
+
+//The Canvas for chips. Supports three kinds of chips, red, green, black,
+//	placed in similar stacks of three.
 class ChipCanvas extends scala.swing.Panel {
   
 	var translate = true
@@ -90,7 +96,9 @@ class ChipCanvas extends scala.swing.Panel {
 		chips = d
 		chipImage = createImage
 	}
-	 
+	
+	//Draws chips in three stacks according to type.
+	//	Draws all the chips for a type stacked vertically.
 	def createImage() : BufferedImage = {
 	    var x = 0.0
 	    var y = 0.0
@@ -105,11 +113,12 @@ class ChipCanvas extends scala.swing.Panel {
  
 	    	var value = chips.number(i)
 	    	var numberofchips = chips.deck(i)
-	    	font = new Font("Bodoni MT Black", Font.BOLD, 30)
+	    	font = new Font("Bodoni MT Black", Font.BOLD, 25)
 		    gr.setFont(font)
 		    
 		    var color = Color.black
 		    var strvalue = ""
+		    var stroffset = 0
 		    
 		    x_row1 = xstart
 		    x_row2 = xstart
@@ -120,7 +129,8 @@ class ChipCanvas extends scala.swing.Panel {
 	    
 		    if (i==0) {
 		    	color = Color.blue
-		    	strvalue = "  5"
+		    	strvalue = "5"
+		    	stroffset = 15
 		    	y_row3 += chipDiameter*(3+yoffset/100)
 		    	x_row3 += chipDiameter*(4+xoffset/100)
 		    	y = y_row3
@@ -128,7 +138,8 @@ class ChipCanvas extends scala.swing.Panel {
 		    }
 		    else if (i==1) {
 		    	color = Color.black
-		    	strvalue = " 25"
+		    	strvalue = "25"
+		    	stroffset = 10
 		    	y_row2 += chipDiameter*(2+yoffset/100)
 		    	x_row2 += chipDiameter*(1+xoffset/100)
 		    	y = y_row2
@@ -137,6 +148,7 @@ class ChipCanvas extends scala.swing.Panel {
 		    else if (i==2) {
 		    	color = Color.white
 		    	strvalue = "100"
+		    	stroffset = 0
 		    	y_row1 += chipDiameter*(3+(yoffset/100))
 		    	x_row1 += chipDiameter*(2.5+xoffset/100)
 		    	y = y_row1
@@ -176,7 +188,7 @@ class ChipCanvas extends scala.swing.Panel {
 			    gr.fill(innerCircle)
 			    gr.setColor(Color.black)
 			    gr.draw(innerBorder)
-			    gr.drawString(strvalue,x.toInt+28,y.toInt+64)
+			    gr.drawString(strvalue,x.toInt+30+stroffset,y.toInt+64)
 			    
 			    x += chipDiameter*(xoffset/100)
 			    y += chipDiameter*(yoffset/100)

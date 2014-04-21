@@ -91,13 +91,11 @@ object SimpleGUI extends SimpleSwingApplication {
 		enabled = true
 		tooltip = "Click to let the deal start"
 	}
-    
+
     var border2 = BorderFactory.createCompoundBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED), 
 	BorderFactory.createEtchedBorder(EtchedBorder.LOWERED))	
 
-    
-	
-	
+	//Create/Draw initial chips, cards, and decks.
 	var gameDeck = new StringDeck
     gameDeck.shuffle
     var playerDeck = new StringDeck(gameDeck.deal(2))
@@ -120,8 +118,6 @@ object SimpleGUI extends SimpleSwingApplication {
       rows = 40
     }
     
-    
-    
     var buttons_layout = new GridPanel(4,1) {
     	this.opaque = false
       
@@ -131,7 +127,6 @@ object SimpleGUI extends SimpleSwingApplication {
 
         contents += button_newgame
     }
-    
     
     var east_layout = new GridPanel(2,1) {
       this.opaque = false
@@ -177,7 +172,6 @@ object SimpleGUI extends SimpleSwingApplication {
       
    }
     
-
     var dealer_space = new BorderPanel {
 
       this.opaque = false

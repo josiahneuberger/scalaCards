@@ -3,10 +3,10 @@ package simpleGUI
 import scala.util.Random
 import scala.util.matching.Regex
 
-/********************************88
+/********************************
  * @author Josiah Neuberger
  * 
- * 	The CardPanel class is based on the very basic design by Ivan Macteki and can be found
+ * 	The CardPanel class is based on the very design by Ivan Macteki and can be found
  *  at http://java.macteki.com/2011/03/how-to-display-deck-of-playing-card-in.html. 
  *  (Licensed under: MIT License): http://opensource.org/licenses/MIT
  *  
@@ -15,17 +15,36 @@ import scala.util.matching.Regex
  *  I referenced the following code for an introduction to Scala GUIs;
  *  	http://www.cis.upenn.edu/~matuszek/Concise%20Guides/Concise%20Scala%20GUI.html
  *   
- *  I also used Subtle Patterns for the face/back of the cards:
+ *  I also used Subtle Patterns for the face/back of the card textures:
  *  	http://subtlepatterns.com/
+ */
+
+/****************************
+ * This is just a proof of concept class, which makes use of Scala's traits to override
+ * 		the cards portion of the deck class by using StandardCards, which implement
+ *   	the deck of cards using a List of Tuples instead of a List of Strings.
+ * 
  */
 class StandardDeck extends Deck[(String, String, Int)] with StandardCards {
 	this.deck = newDeck  
 }
 
+/************************************
+ * A class that represents a standard deck of 52 cards, which will be used to
+ * 		play Blackjack. The deck employs the use of a List of Strings to represent
+ *   	the deck of cards.
+ *    
+ * This class does not require a full deck of cards so it can be used to manage player decks,
+ * 		the dealer's deck, and the draw deck by creating multiple instances and dealing or drawing
+ *   	cards from each deck.
+ *    
+ *    
+ */
 class StringDeck extends Deck[String] with StringCards with StringBlackjack {
   
 	this.deck = newDeck
 	
+	//Creates a new deck with specified cards.
 	def this(yourDeck: List[String]) {
 	  this()
 	  deck = yourDeck
@@ -37,9 +56,16 @@ class StringDeck extends Deck[String] with StringCards with StringBlackjack {
   
 }
 
+/*****************************
+ * A class that represents three poker chips, red, green, black, to represent: $5, $25, and $100.
+ * 	The chips are stored using an ordered list of three elements. You must call the 'setDeck' function
+ *  if you wish to override the standard number of chips.
+ *  
+ */
 class StringChips extends Deck[Int] with PokerChips {
 	this.deck = newDeck
 	
+	//Add the array of chips, r,g,b, to this deck of chips.
 	def add(c: Array[Int]) = {
 		
 		var l:Array[Int] = new Array[Int](3)
@@ -49,6 +75,7 @@ class StringChips extends Deck[Int] with PokerChips {
 		deck = List.fromArray(l)
 	}
 	
+	//Remove the chips, r,g,b, from this deck of chips.
 	def subtract(c: Array[Int]) = {
 		
 		var l:Array[Int] = new Array[Int](3)
@@ -58,24 +85,31 @@ class StringChips extends Deck[Int] with PokerChips {
 		deck = List.fromArray(l)
 	}
 	
+	//Returns the total value of your chips
 	def value(): Int = {
 		return value(this.deck.toArray)
 	}
 	
+	//Returns the total value of the stored bet amount.
 	def betvalue(): Int = {
 	  return value(this.betAmount)
 	}
 	
-	def red(): Int = { return deck(0) }
-	def green(): Int = { return deck(1) }
-	def black(): Int = { return deck(2) }
+	def red(): Int = { return deck(0) } //# of red chips
+	def green(): Int = { return deck(1) } //# of green chips
+	def black(): Int = { return deck(2) } //# of black chips
 	
-	def redbet(): Int = { return betAmount(0) }
-	def greenbet(): Int = { return betAmount(1) }
-	def blackbet(): Int = { return betAmount(2) }
+	def redbet(): Int = { return betAmount(0) } //# of red chips bet
+	def greenbet(): Int = { return betAmount(1) } //# of green chips bet
+	def blackbet(): Int = { return betAmount(2) } //# of black chips bet
 }
 
-
+/***********
+ * An abstract class that represents a deck of cards stored as a List. Supports 
+ * 	operations such as dealing cards and being dealt cards from the top of the List.
+ *  
+ *  
+ */
 abstract class Deck[L] {
 	var deck:List[L] = List()
 	
@@ -119,6 +153,10 @@ abstract class Deck[L] {
 
 }
 
+
+/*********************
+ * Proof of concept for overriding the String deck with a List of Tuples.
+ */
 trait StandardCards {
 	
 	def newDeck() : List[(String, String, Int)] = {
@@ -130,20 +168,28 @@ trait StandardCards {
 							("C", "7", 7), ("C", "8", 8), ("C", "9", 9), ("C", "T", (10)), ("C", "J", (10)), ("C", "Q", (10)), ("C", "K", (10)),
 						("D", "A", 1), ("D", "2", 2), ("D", "3", 3), ("D", "4", 4), ("D", "5", 5), ("D", "6", 6),
 							("D", "7", 7), ("D", "8", 8), ("D", "9", 9), ("D", "T", (10)), ("D", "J", (10)), ("D", "Q", (10)), ("D", "K", (10))
-					)
-	}
+					)}
 }
 
+/*********************
+ * Defines a standard 52 deck of cards using a String to represent each card: "[Suit][Symbol]", ie: "SA", or "H9".
+ * 
+ * Source: http://java.macteki.com/2011/03/how-to-shuffle-playing-card-in-java.html
+ */
 trait StringCards {
 	
 	def newDeck() : List[String]  = {
-		return List("SA", "S2", "SA","S2","S3","S4","S5","S6","S7","S8","S9","ST","SJ","SQ","SK", // spade
+		return List("SA","S2","S3","S4","S5","S6","S7","S8","S9","ST","SJ","SQ","SK", // spade
 					"HA","H2","H3","H4","H5","H6","H7","H8","H9","HT","HJ","HQ","HK", // heart
 					"CA","C2","C3","C4","C5","C6","C7","C8","C9","CT","CJ","CQ","CK", // club
 					"DA","D2","D3","D4","D5","D6","D7","D8","D9","DT","DJ","DQ","DK")  // diamond
 	}
 }
 
+/****************************
+ * A trait that represents the scoring of Blackjack. Provides matching on a string representation
+ * 		of playing cards using a "[SHCD][A1-9TJQK]".
+ */
 trait StringBlackjack {
 	
 	def aceScore(s: Int, ac: Int): Int = { if ( ac==0 || ((ac*11+s)>21) ) return ac else return 11 }
@@ -175,6 +221,11 @@ trait StringBlackjack {
 	}	
 }
 
+
+/******************
+ * A trait that represents three poker chips using an ordered list, 'red,green,black", paired with
+ * 		chip values of '$5, $25, $100'.
+ */
 trait PokerChips {
 
 	val value_black = 100
@@ -195,6 +246,7 @@ trait PokerChips {
 	      case _ => System.err.println("ERROR: bad deck we couldn't match this card:" + card); (0,0);
 	}
 	
+	//Returns the total value of this stash of chips
 	def value(chipList: Array[Int]): Int = {
 	  var stashValue = 0
 	  
@@ -206,6 +258,7 @@ trait PokerChips {
 	  return stashValue
 	}
 	
+	//Returns an array with this stash of chips translated in the biggest value chips possible.
 	def translateToBigChips(chipList: Array[Int]): Array[Int] = {
 		var stashValue = value(chipList)
 
